@@ -1,12 +1,12 @@
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcryptjs");
-const db = require("../db/queries");
+const { get } = require("../db/queries");
 
 passport.use(
   new LocalStrategy(async (username, password, done) => {
     try {
-      const user = await db.getUserByUsername(username);
+      const user = await get.userByUsername(username);
       if (!user) {
         return done(null, false, { message: "Incorrect username" });
       }
@@ -28,7 +28,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const user = await db.getUserById(id);
+    const user = await get.userById(id);
     done(null, user);
   } catch (err) {
     done(err);

@@ -1,12 +1,12 @@
 const asyncHandler = require("express-async-handler");
-const db = require("../db/queries");
+const { create, get, update, dlt, helpers } = require("../db/queries");
 const { passport } = require("../mw/passportConfig");
 const bcrypt = require("bcryptjs");
 
 const signUp = asyncHandler(async (req, res, next) => {
   const { username, password } = req.body;
   try {
-    const isTaken = await db.getUserByUsername(username);
+    const isTaken = await get.userByUsername(username);
     if (isTaken) {
       const payload = {
         errors: { username: "The username is already taken" },
@@ -15,14 +15,14 @@ const signUp = asyncHandler(async (req, res, next) => {
       return res.render("sign-up", { payload });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    await db.createUser(username, hashedPassword);
+    await create.user(username, hashedPassword);
   } catch (err) {
     return next(err);
   }
 });
 
 const logIn = passport.authenticate("local", {
-  successRedirect: "/storage/dashboard",
+  successRedirect: "/storage",
   failureRedirect: "/auth/log-in",
   failureMessage: true,
 });
