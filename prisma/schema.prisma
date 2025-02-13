@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
+}
+
+model User {
+  id              String      @id @default(uuid())
+  username        String      @unique
+  hashed_password String
+  createdAt       DateTime    @default(now())
+  Files           File[]
+  Folders         Folder[]
+  ShareLinks      ShareLink[]
+}
+
+model Folder {
+  id        String   @id @default(uuid())
+  name      String
+  owner     User     @relation(fields: [ownerId], references: [id])
+  ownerId   String
+  parent    Folder?  @relation("ParentFolder", fields: [parentId], references: [id])
+  parentId  String?
+  children  Folder[] @relation("ParentFolder")
+  Files     File[]
+  isTrash   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ShareLinks ShareLink[] @relation("FolderShare")
+
+  @@index([ownerId])
+  @@index([parentId])
+}
+
+model File {
+  id         String      @id @default(uuid())
+  cloudId    String
+  name       String
+  size       Int
+  fileType   String
+  isTrash    Boolean     @default(false)
+  owner      User        @relation(fields: [ownerId], references: [id])
+  ownerId    String
+  parent     Folder?     @relation(fields: [parentId], references: [id])
+  parentId   String
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  ShareLinks ShareLink[] @relation("FileShare")
+
+  @@index([ownerId])
+  @@index([parentId])
+}
+
+model ShareLink {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  owner     User     @relation(fields: [ownerId], references: [id])
+  ownerId   String
+  file      File?    @relation("FileShare", fields: [fileId], references: [id], onDelete: Cascade)
+  fileId    String?
+  folder    Folder?  @relation("FolderShare", fields: [folderId], references: [id], onDelete: Cascade)
+  folderId  String?
+
+  @@index([fileId])
+  @@index([folderId])
+}
