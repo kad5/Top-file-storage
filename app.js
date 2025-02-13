@@ -13,7 +13,7 @@ const authRouter = require("./routers/authRouter");
 const storageRouter = require("./routers/storageRouter");
 
 // init app and storage
-
+const access = require("./mw/authentication");
 const app = express();
 
 app.use(express.json());
@@ -42,11 +42,14 @@ app.use(passport.session());
 
 // routes declaration
 
-app.use("/", publicRouter);
+//app.use("/", publicRouter);
 app.use("/auth", authRouter);
-app.use("/storage", storageRouter);
-app.use(errorHandler);
-
+//app.use("/storage", storageRouter);
+//app.use("/share", shareRouter);
+//app.use(errorHandler);
+app.get("/storage/dashboard", access.privateOnly, (req, res) =>
+  res.render("dashboard")
+);
 // init the server
 
 app.listen(process.env.PORT, () =>

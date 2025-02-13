@@ -14,9 +14,17 @@ function checkAcess(requiredLevel) {
   };
 }
 
-function ensureNotAuth(req, res, next) {
+function publicOnly(req, res, next) {
   if (req.isAuthenticated()) {
-    return res.redirect("/dashboard");
+    return res.redirect("/storage/dashboard");
   }
   next();
 }
+function privateOnly(req, res, next) {
+  if (!req.isAuthenticated()) {
+    return res.redirect("/auth/log-in");
+  }
+  next();
+}
+
+module.exports = { publicOnly, privateOnly };

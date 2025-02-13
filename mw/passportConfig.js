@@ -6,14 +6,11 @@ const db = require("../db/queries");
 passport.use(
   new LocalStrategy(async (username, password, done) => {
     try {
-      const { rows } = await db.findUserByUsername(username);
-      const user = rows[0];
-
+      const user = await db.getUserByUsername(username);
       if (!user) {
         return done(null, false, { message: "Incorrect username" });
       }
-
-      const match = await bcrypt.compare(password, user.password);
+      const match = await bcrypt.compare(password, user.hashed_password);
       if (!match) {
         return done(null, false, { message: "Incorrect password" });
       }
@@ -31,8 +28,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const { rows } = await db.findUserById(id);
-    const user = rows[0];
+    const user = await db.getUserById(id);
     done(null, user);
   } catch (err) {
     done(err);

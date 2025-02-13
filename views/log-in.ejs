@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Log In</title>
+  </head>
+  <body>
+    <h1>Log In</h1>
+
+    <% if (payload && payload.errors) { %>
+    <div style="color: red">
+      <% if (payload.errors.username) { %>
+      <p><%= payload.errors.username %></p>
+      <% } %> <% if (payload.errors.password) { %>
+      <p><%= payload.errors.password %></p>
+      <% } %>
+    </div>
+    <% } %>
+
+    <form method="POST" action="/auth/log-in">
+      <label for="username">Username</label>
+      <input
+        type="text"
+        id="username"
+        name="username"
+        value="<%= payload ? payload.formData.username : '' %>"
+        required
+      />
+      <br />
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required />
+      <br />
+
+      <button type="submit">Log In</button>
+    </form>
+
+    <p>Don't have an account? <a href="/auth/sign-up">Sign Up</a></p>
+  </body>
+</html>

@@ -1,8 +1,8 @@
-import { PrismaClient } from "@prisma/client";
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 //////////////////////////////////////// CREATE ////////////////////////////////////////
-export const createUser = async (username, hashedPassword) => {
+const createUser = async (username, hashedPassword) => {
   return prisma.user.create({
     data: {
       username,
@@ -11,7 +11,7 @@ export const createUser = async (username, hashedPassword) => {
   });
 };
 
-export const createNewFolder = async (name, ownerId, parentId = null) => {
+const createNewFolder = async (name, ownerId, parentId = null) => {
   return prisma.folder.create({
     data: {
       name,
@@ -21,7 +21,7 @@ export const createNewFolder = async (name, ownerId, parentId = null) => {
   });
 };
 
-export const createNewFile = async (
+const createNewFile = async (
   name,
   ownerId,
   size,
@@ -41,7 +41,7 @@ export const createNewFile = async (
   });
 };
 
-export const createShareLink = async (ownerId, expiresAt, type, itemId) => {
+const createShareLink = async (ownerId, expiresAt, type, itemId) => {
   if (type === "folder")
     return prisma.folder.create({
       data: { ownerId, expiresAt, folderId: itemId },
@@ -53,19 +53,19 @@ export const createShareLink = async (ownerId, expiresAt, type, itemId) => {
 
 //////////////////////////////////////// READ ////////////////////////////////////////
 
-export const getUserByUsername = async (username) => {
+const getUserByUsername = async (username) => {
   return prisma.user.findUnique({
     where: { username },
   });
 };
 
-export const getUserById = async (id) => {
+const getUserById = async (id) => {
   return prisma.user.findUnique({
     where: { id },
   });
 };
 
-export const getDirContents = async (ownerId, parentId = null) => {
+const getDirContents = async (ownerId, parentId = null) => {
   try {
     const [folders, files] = await Promise.all([
       prisma.folder.findMany({
@@ -92,7 +92,7 @@ export const getDirContents = async (ownerId, parentId = null) => {
   }
 };
 
-export const getTrash = async (ownerId) => {
+const getTrash = async (ownerId) => {
   try {
     const [folders, files] = await Promise.all([
       prisma.folder.findMany({
@@ -117,7 +117,7 @@ export const getTrash = async (ownerId) => {
   }
 };
 
-export const getAllSharedByUser = async (ownerId) => {
+const getAllSharedByUser = async (ownerId) => {
   const [sharedFiles, sharedFolders] = await Promise.all([
     prisma.shareLink.findMany({
       where: {
@@ -145,7 +145,7 @@ export const getAllSharedByUser = async (ownerId) => {
 };
 
 // extras
-export const getParent = async (type, itemId) => {
+const getParent = async (type, itemId) => {
   if (type === "folder") {
     const folder = await prisma.folder.findUnique({
       where: {
@@ -171,13 +171,13 @@ export const getParent = async (type, itemId) => {
   return null;
 };
 
-export const getFolderById = async (id) => {
+const getFolderById = async (id) => {
   return prisma.folder.findUnique({
     where: { id },
   });
 };
 
-export const getFileById = async (id) => {
+const getFileById = async (id) => {
   return prisma.file.findUnique({
     where: { id },
   });
@@ -185,38 +185,38 @@ export const getFileById = async (id) => {
 
 //////////////////////////////////////// UPDATE ////////////////////////////////////////
 
-export const updateFileName = async (id, newName) => {
+const updateFileName = async (id, newName) => {
   return prisma.file.update({
     where: { id },
     data: { name: newName },
   });
 };
 
-export const updateFolderName = async (id, newName) => {
+const updateFolderName = async (id, newName) => {
   return prisma.folder.update({
     where: { id },
     data: { name: newName },
   });
 };
 
-export const moveFolderToTrash = async (id) => {
+const moveFolderToTrash = async (id) => {
   return prisma.folder.update({ where: { id }, data: { isTrash: true } });
 };
 
-export const moveFileToTrash = async (id) => {
+const moveFileToTrash = async (id) => {
   return prisma.file.update({ where: { id }, data: { isTrash: true } });
 };
 
-export const restorFolderFromTrash = async (id) => {
+const restorFolderFromTrash = async (id) => {
   return prisma.folder.update({ where: { id }, data: { isTrash: false } });
 };
 
-export const restorFileFromTrash = async (id) => {
+const restorFileFromTrash = async (id) => {
   return prisma.file.update({ where: { id }, data: { isTrash: false } });
 };
 
 // change parent for cut and paste functionality
-export const updateItemParent = async (type, itemId, newParentId) => {
+const updateItemParent = async (type, itemId, newParentId) => {
   const parent = await getParent(type, itemId);
   if (parent?.id === newParentId) return null;
   if (type === "folder") {
@@ -237,16 +237,16 @@ export const updateItemParent = async (type, itemId, newParentId) => {
 
 //////////////////////////////////////// DELETE ////////////////////////////////////////
 
-export const deleteShareLink = async (id) => {
+const deleteShareLink = async (id) => {
   return prisma.shareLink.delete({ where: { id } });
 };
 
 // used onDelete: Cascade in the shcema deletes related sharelinks
-export const deleteFile = async (id) => {
+const deleteFile = async (id) => {
   return prisma.file.delete({ where: { id } });
 };
 
-export const deleteFolder = async (ownerId, folderId) => {
+const deleteFolder = async (ownerId, folderId) => {
   try {
     // deleting the root clears the user' storage
     if (folderId === null) {
@@ -282,7 +282,7 @@ export const deleteFolder = async (ownerId, folderId) => {
 //////////////////////////////////////// HELPERS ////////////////////////////////////////
 
 // creates ids arrays to pass to the delete func
-export const generateIdsArray = async (ownerId, folderId) => {
+const generateIdsArray = async (ownerId, folderId) => {
   const folderIds = [];
   const fileIds = [];
   const stack = [folderId];
@@ -300,7 +300,7 @@ export const generateIdsArray = async (ownerId, folderId) => {
 };
 
 // map holding directory trees
-export const generateDirTree = async (ownerId) => {
+const generateDirTree = async (ownerId) => {
   const folders = await prisma.folder.findMany({
     where: { ownerId },
   });
@@ -329,4 +329,27 @@ export const generateDirTree = async (ownerId) => {
   });
 
   return dirMap;
+};
+
+module.exports = {
+  createUser,
+  createNewFolder,
+  createNewFile,
+  createShareLink,
+  getUserByUsername,
+  getUserById,
+  getDirContents,
+  getTrash,
+  getAllSharedByUser,
+  updateFileName,
+  updateFolderName,
+  moveFolderToTrash,
+  moveFileToTrash,
+  restorFolderFromTrash,
+  restorFileFromTrash,
+  updateItemParent,
+  deleteShareLink,
+  deleteFile,
+  deleteFolder,
+  generateDirTree,
 };
