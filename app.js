@@ -4,14 +4,12 @@ const express = require("express");
 const session = require("express-session");
 const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
 const { PrismaClient } = require("@prisma/client");
-
 const { passport } = require("./mw/passportConfig");
-const errorHandler = require("./mw/errorHandler");
 
 const publicRouter = require("./routers/publicRouter");
-const authRouter = require("./routers/authRouter");
-const storageRouter = require("./routers/storageRouter");
+const privateRouter = require("./routers/privateRouter");
 const access = require("./mw/authentication");
+const errorHandler = require("./mw/errorHandler");
 
 // init app and storage
 const app = express();
@@ -43,9 +41,8 @@ app.use(passport.session());
 // routes declaration
 
 app.use("/", publicRouter);
-app.use("/auth", authRouter);
-app.use("/storage", access.privateOnly, storageRouter);
-//app.use(errorHandler);
+app.use("/storage", access.privateOnly, privateRouter);
+app.use(errorHandler);
 
 // init the server
 

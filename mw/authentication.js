@@ -22,7 +22,7 @@ function publicOnly(req, res, next) {
 }
 function privateOnly(req, res, next) {
   if (!req.isAuthenticated()) {
-    return res.redirect("/auth/log-in");
+    return res.redirect("/log-in");
   }
   next();
 }

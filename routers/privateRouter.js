@@ -1,0 +1,53 @@
+const create = require("../controllers/storage/create");
+const read = require("../controllers/storage/read");
+const update = require("../controllers/storage/update");
+const dlt = require("../controllers/storage/delete");
+const validate = require("../mw/validation");
+const { Router } = require("express");
+const router = Router();
+
+//mescilanous
+router.get("/", read.renderDir);
+router.get("/dir/:folderId", read.renderDir);
+router.get("/trash", read.renderTrash);
+router.get("/shared", read.renderShared);
+router.post("/download/:fileId", read.downloadFile);
+//files
+router.post("/file/new", validate.Newfile, create.file);
+router.post("/file/rename/:fileId", validate.string, update.fileName);
+router.post("/file/trash/:fileId", update.fileToTrash);
+router.post("/file/restore/:fileId", update.restoreFile);
+router.post("/file/delete/:fileId", dlt.file);
+//folders
+router.post("/folder/new", validate.string, create.folder);
+router.post("/folder/rename/:folderId", validate.string, update.folderName);
+router.post("/folder/trash/:fileId", update.folderToTrash);
+router.post("/folder/restore/:fileId", update.RestoreFolder);
+router.post("/folder/delete/:folderId", dlt.folder);
+//shared
+router.post("/shared/new", create.shareLink);
+router.post("/shared/delete/:linkId", dlt.shareLink);
+
+module.exports = router;
+
+/*
+crud
+c: file, folder, share link
+r: dir, tree, trash, shared, file, folder
+u: file, folder, trash in and out, parent
+d: link, file, folder
+*/
+/*
+return res.redirect(req.originalUrl); 
+const updateFile = asyncHandler(async (req, res, next) => {
+  const { fileId } = req.params;
+
+  // Your file update logic here
+  // ...
+
+  // After handling the file update, redirect back to the same dynamic URL
+  const folderId = req.body.folderId; // Get the folderId from the form submission (adjust as necessary)
+  return res.redirect(`/dir/${folderId}`);  // Redirect to the same directory page
+});
+
+*/

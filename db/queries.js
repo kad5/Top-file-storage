@@ -66,7 +66,7 @@ const get = {
       where: { id },
     });
   },
-  dirContents: async (ownerId, parentId = null) => {
+  dirContents: async (ownerId, parentId) => {
     try {
       const [folders, files] = await Promise.all([
         prisma.folder.findMany({
@@ -117,7 +117,7 @@ const get = {
     }
   },
   allSharedByUser: async (ownerId) => {
-    const [sharedFiles, sharedFolders] = await Promise.all([
+    const [files, folders] = await Promise.all([
       prisma.shareLink.findMany({
         where: {
           file: {
@@ -140,7 +140,7 @@ const get = {
       }),
     ]);
 
-    return { sharedFolders, sharedFiles };
+    return { folders, files };
   },
   parent: async (type, itemId) => {
     if (type === "folder") {
@@ -167,7 +167,15 @@ const get = {
     }
     return null;
   },
+  shareDetails: async (id) => {
+    return prisma.shareLink.findUnique({
+      where: {
+        id,
+      },
+    });
+  },
 };
+
 //////////////////////////////////////// UPDATE ////////////////////////////////////////
 const update = {
   fileName: async (id, newName) => {

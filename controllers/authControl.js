@@ -23,7 +23,7 @@ const signUp = asyncHandler(async (req, res, next) => {
 
 const logIn = passport.authenticate("local", {
   successRedirect: "/storage",
-  failureRedirect: "/auth/log-in",
+  failureRedirect: "/log-in",
   failureMessage: true,
 });
 

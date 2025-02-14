@@ -53,7 +53,7 @@ model File {
   owner      User        @relation(fields: [ownerId], references: [id])
   ownerId    String
   parent     Folder?     @relation(fields: [parentId], references: [id])
-  parentId   String
+  parentId   String?
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
   ShareLinks ShareLink[] @relation("FileShare")
