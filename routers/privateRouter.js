@@ -3,6 +3,8 @@ const read = require("../controllers/storage/read");
 const update = require("../controllers/storage/update");
 const dlt = require("../controllers/storage/delete");
 const validate = require("../mw/validation");
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 const { Router } = require("express");
 const router = Router();
 
@@ -13,7 +15,12 @@ router.get("/trash", read.renderTrash);
 router.get("/shared", read.renderShared);
 router.post("/download/:fileId", read.downloadFile);
 //files
-router.post("/file/new", validate.Newfile, create.file);
+router.post(
+  "/file/upload",
+  validate.Newfile,
+  upload.single("file"),
+  create.file
+);
 router.post("/file/rename/:fileId", validate.string, update.fileName);
 router.post("/file/trash/:fileId", update.fileToTrash);
 router.post("/file/restore/:fileId", update.restoreFile);
@@ -25,7 +32,7 @@ router.post("/folder/trash/:folderId", update.folderToTrash);
 router.post("/folder/restore/:folderId", update.RestoreFolder);
 router.post("/folder/delete/:folderId", dlt.folder);
 //shared
-router.post("/shared/new", create.shareLink);
+router.post("/shared/new", validate.shareInput, create.shareLink);
 router.post("/shared/delete/:linkId", dlt.shareLink);
 
 module.exports = router;

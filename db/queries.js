@@ -11,7 +11,7 @@ const create = {
       },
     });
   },
-  folder: async (name, ownerId, parentId = null) => {
+  folder: async (name, ownerId, parentId) => {
     return prisma.folder.create({
       data: {
         name,
@@ -20,7 +20,7 @@ const create = {
       },
     });
   },
-  file: async (name, ownerId, size, fileType, couldId, parentId = null) => {
+  file: async (name, ownerId, size, fileType, cloudId, parentId) => {
     return prisma.file.create({
       data: {
         name,
@@ -28,7 +28,7 @@ const create = {
         parentId,
         size,
         fileType,
-        couldId,
+        cloudId,
       },
     });
   },
