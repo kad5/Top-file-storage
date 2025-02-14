@@ -21,8 +21,8 @@ router.post("/file/delete/:fileId", dlt.file);
 //folders
 router.post("/folder/new", validate.string, create.folder);
 router.post("/folder/rename/:folderId", validate.string, update.folderName);
-router.post("/folder/trash/:fileId", update.folderToTrash);
-router.post("/folder/restore/:fileId", update.RestoreFolder);
+router.post("/folder/trash/:folderId", update.folderToTrash);
+router.post("/folder/restore/:folderId", update.RestoreFolder);
 router.post("/folder/delete/:folderId", dlt.folder);
 //shared
 router.post("/shared/new", create.shareLink);

@@ -1,25 +1,43 @@
 const asyncHandler = require("express-async-handler");
-const { get, update } = require("../../db/queries");
-const read = require("./read");
+const { update } = require("../../db/queries");
 
-const fileName = asyncHandler((req, res) => {
+const fileName = asyncHandler(async (req, res) => {
+  const { fileId } = req.params;
+  const { newName } = req.body;
+  await update.fileName(fileId, newName);
   return res.redirect(req.originalUrl);
 });
-const fileToTrash = asyncHandler((req, res) => {
+const folderName = asyncHandler(async (req, res) => {
+  const { folderId } = req.params;
+  const { newName } = req.body;
+  await update.folderName(folderId, newName);
   return res.redirect(req.originalUrl);
 });
-const restoreFile = asyncHandler((req, res) => {
+const restoreFile = asyncHandler(async (req, res) => {
+  const { fileId } = req.params;
+  await update.restoreFileFromTrash(fileId);
   return res.redirect(req.originalUrl);
 });
-const folderName = asyncHandler((req, res) => {
+
+const fileToTrash = asyncHandler(async (req, res) => {
+  const { fileId } = req.params;
+  await update.moveFileToTrash(fileId);
   return res.redirect(req.originalUrl);
 });
-const folderToTrash = asyncHandler((req, res) => {
-  return res.redirect(`/dir/${parentId}`);
-});
-const RestoreFolder = asyncHandler((req, res) => {
+
+const RestoreFolder = asyncHandler(async (req, res) => {
+  const { folderId } = req.params;
+  await update.restorFolderFromTrash(folderId);
   return res.redirect(req.originalUrl);
 });
+
+const folderToTrash = asyncHandler(async (req, res) => {
+  const { folderId } = req.params;
+  const result = await update.moveFolderToTrash(folderId);
+  const redirectUrl = result.parentId ? `/dir/${result.parentId}` : "/";
+  return res.redirect(redirectUrl);
+});
+
 module.exports = {
   fileName,
   fileToTrash,

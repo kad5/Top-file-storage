@@ -191,7 +191,11 @@ const update = {
     });
   },
   moveFolderToTrash: async (id) => {
-    return prisma.folder.update({ where: { id }, data: { isTrash: true } });
+    return prisma.folder.update({
+      where: { id },
+      data: { isTrash: true },
+      select: { parentId: true },
+    });
   },
 
   moveFileToTrash: async (id) => {
@@ -202,7 +206,7 @@ const update = {
     return prisma.folder.update({ where: { id }, data: { isTrash: false } });
   },
 
-  restorFileFromTrash: async (id) => {
+  restoreFileFromTrash: async (id) => {
     return prisma.file.update({ where: { id }, data: { isTrash: false } });
   },
   updateItemParent: async (type, itemId, newParentId) => {
