@@ -29,20 +29,33 @@
     </header>
     <div class="page wrapper">
       <aside>
+        <% if (username) { %>
         <div>
-          <a href="">Root Directory</a>
+          <a href="/storage">Root Directory</a>
         </div>
         <div>
-          <a href="">Shared folder</a>
+          <a href="/storage/shared">Shared folder</a>
         </div>
+        <% } %>
         <div class="map"></div>
+        <% if (username) { %>
         <div>
-          <a href="">Trash bin</a>
+          <a href="/storage/trash">Trash bin</a>
         </div>
+        <% } %>
       </aside>
       <main>
         <div class="top">
-          <div class="path"></div>
+          <div class="path">
+            <% if (state === "storage") { %>
+            <p>path to the file</p>
+            <% } %> <% if (state === "trash") { %>
+            <p>Trash bin</p>
+            <% } %> <% if (state === "shared") { %>
+            <p>Shared files and folders</p>
+            <% } %>
+          </div>
+          <% if (username && state === "storage") { %>
           <div class="new">
             <dialog>
               <div class="form-container">
@@ -86,8 +99,10 @@
             </dialog>
             <button>File upload</button>
           </div>
+          <% } %>
         </div>
         <div class="bottom">
+          <% if (state !== "shared") { %>
           <div class="content">
             <div>Name</div>
             <div>Last modified</div>
@@ -107,14 +122,58 @@
               </div>
               <div></div>
               <div>
-                <a href="/storage/folder/rename/<%= folder.id %>">rename</a>
-                <a href="/storage/folder/share/<%= folder.id %>">share</a>
-                <a href="/storage/folder/trash/<%= folder.id %>"
-                  >Send to trash</a
-                >
-                <a href="/storage/folder/details/<%= folder.id %>"
-                  >more details</a
-                >
+                <div>
+                  <dialog>
+                    <form
+                      action="/storage/folder/rename/<%= folder.id %>"
+                      method="POST"
+                    >
+                      <button type="submit">Rename</button>
+                    </form>
+                  </dialog>
+                  <button>Rename</button>
+                </div>
+                <div>
+                  <dialog>
+                    <form action="/storage/shared/new" method="POST">
+                      <input type="datetime-local" name="expiresAt" />
+                      <input
+                        type="hidden"
+                        name="itemId"
+                        value="<%= folder.id %>"
+                      />
+                      <input type="hidden" name="type" value="folder" />
+                      <button type="submit">Share</button>
+                    </form>
+                  </dialog>
+                  <button>Share</button>
+                </div>
+                <% if (state === "trash") { %>
+                <div>
+                  <form
+                    action="/storage/folder/restore/<%= folder.id %>"
+                    method="POST"
+                  >
+                    <button type="submit">Restore</button>
+                  </form>
+                </div>
+                <% } else {%>
+                <div>
+                  <form
+                    action="/storage/folder/trash/<%= folder.id %>"
+                    method="POST"
+                  >
+                    <button type="submit">Send to Trash</button>
+                  </form>
+                </div>
+                <% } %>
+                <div>
+                  <button
+                    onclick="detailsReview(`<%= folder.name %>`,`<%=  folder.createdAt %>`,`<%=  folder.updatedAt %>`,`<%=  folder.ShareLinks %>`,`folder`,`coming soon`)"
+                  >
+                    More Details
+                  </button>
+                </div>
               </div>
             </li>
             <% }); %> <% contents.files.forEach((file) => { %>
@@ -127,14 +186,65 @@
               </div>
               <div><%= Math.round(file.size / 1024) %> kbs</div>
               <div>
-                <a href="/storage/file/rename/<%= file.id %>">rename</a>
-                <a href="/storage/file/share/<%= file.id %>">share</a>
-                <a href="/storage/file/trash/<%= file.id %>">Send to trash</a>
-                <a href="/storage/file/details/<%= file.id %>">more details</a>
+                <div>
+                  <dialog>
+                    <form
+                      action="/storage/file/rename/<%= file.id %>"
+                      method="POST"
+                    >
+                      <button type="submit">Rename</button>
+                    </form>
+                  </dialog>
+                  <button>Rename</button>
+                </div>
+                <div>
+                  <dialog>
+                    <form action="/storage/shared/new" method="POST">
+                      <input type="datetime-local" name="expiresAt" />
+                      <input
+                        type="hidden"
+                        name="itemId"
+                        value="<%= file.id %>"
+                      />
+                      <input type="hidden" name="type" value="file" />
+                      <button type="submit">Share</button>
+                    </form>
+                  </dialog>
+                  <button>Share</button>
+                </div>
+                <% if (state === "trash") { %>
+                <div>
+                  <form
+                    action="/storage/file/trash/<%= file.id %>"
+                    method="POST"
+                  >
+                    <button type="submit">Restore</button>
+                  </form>
+                </div>
+                <% } else {%>
+                <div>
+                  <form
+                    action="/storage/file/restore/<%= file.id %>"
+                    method="POST"
+                  >
+                    <button type="submit">Send to Trash</button>
+                  </form>
+                </div>
+                <% } %>
+                <div>
+                  <button
+                    onclick="detailsReview(`<%= file.name %>`,`<%=  file.createdAt %>`,`<%=  file.updatedAt %>`,`<%=  file.ShareLinks %>`,`<%=  file.fileType %>`,`<%=  file.size %>`)"
+                  >
+                    More Details
+                  </button>
+                </div>
               </div>
             </li>
             <% }); %>
           </ul>
+          <% } else {%>
+          <p>shared</p>
+          <% } %>
         </div>
       </main>
     </div>
@@ -144,6 +254,15 @@
         const openBtn = box.nextElementSibling;
         openBtn.addEventListener("click", () => box.showModal());
       });
+
+      function detailsReview(name, createdAt, updatedAt, shares, type, size) {
+        console.log(name);
+        console.log(createdAt);
+        console.log(updatedAt);
+        console.log(shares);
+        console.log(type);
+        console.log(size);
+      }
     </script>
   </body>
 </html>

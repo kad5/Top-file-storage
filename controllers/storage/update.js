@@ -44,8 +44,7 @@ const RestoreFolder = asyncHandler(async (req, res) => {
 const folderToTrash = asyncHandler(async (req, res) => {
   const { folderId } = req.params;
   const result = await update.moveFolderToTrash(folderId);
-
-  const redirectUrl = result.parentId ? `/dir/${result.parentId}` : "/";
+  const redirectUrl = result.parentId ? `/storage/dir/${result.parentId}` : "/";
   return res.redirect(redirectUrl);
 });
 

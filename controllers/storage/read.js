@@ -8,21 +8,39 @@ const renderDir = asyncHandler(async (req, res) => {
   const folderId = req.params.folderId || null;
   const contents = await get.dirContents(id, folderId);
   const map = await helpers.generateDirTree(id);
-  res.render("dashboard", { username, contents, map, folderId });
+  res.render("dashboard", {
+    state: "storage",
+    username,
+    contents,
+    map,
+    folderId,
+  });
 });
 
 const renderTrash = asyncHandler(async (req, res) => {
   const { id, username } = req.user;
   const contents = await get.trash(id);
   const map = await helpers.generateDirTree(id);
-  res.render("dashboard", { username, contents, map, folderId: null });
+  res.render("dashboard", {
+    state: "trash",
+    username,
+    contents,
+    map,
+    folderId: null,
+  });
 });
 
 const renderShared = asyncHandler(async (req, res) => {
   const { id, username } = req.user;
   const contents = await get.allSharedByUser(id);
   const map = await helpers.generateDirTree(id);
-  res.render("dashboard", { username, contents, map, folderId: null });
+  res.render("dashboard", {
+    state: "shared",
+    username,
+    contents,
+    map,
+    folderId: null,
+  });
 });
 
 const renderSharedPublic = asyncHandler(async (req, res) => {
@@ -39,7 +57,13 @@ const renderSharedPublic = asyncHandler(async (req, res) => {
     const contents = await get.dirContents(ownerId, folderId);
     const map = await helpers.generateDirTree(ownerId);
     //function to select from the map
-    return res.render("dashboard", { username, contents, map });
+    return res.render("dashboard", {
+      state: "storage",
+      username,
+      contents,
+      map,
+      folderId,
+    });
   }
   res.send("not allowed");
 });

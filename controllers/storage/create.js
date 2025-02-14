@@ -6,7 +6,7 @@ const file = asyncHandler(async (req, res) => {
     return res.send("upload something");
   }
   const ownerId = req.user.id;
-  const parentId = req.params.folderId || null;
+  const parentId = req.body.folderId || null;
   const { originalname, mimetype, size, path } = req.file;
   await create.file(originalname, ownerId, size, mimetype, path, parentId);
 
@@ -18,7 +18,6 @@ const folder = asyncHandler(async (req, res) => {
   const name = req.body.name;
 
   const parentId = req.body.folderId || null;
-  console.log(parentId);
   await create.folder(name, ownerId, parentId);
 
   const referer = req.headers.referer || "/storage";
@@ -27,8 +26,9 @@ const folder = asyncHandler(async (req, res) => {
 const shareLink = asyncHandler(async (req, res) => {
   const ownerId = req.user.id;
   const { expiresAt, type, itemId } = req.body;
-  await create.shareLink(ownerId, expiresAt, type, itemId);
-  return res.redirect("/shared");
+  const formatted = new Date(expiresAt);
+  await create.shareLink(ownerId, formatted, type, itemId);
+  return res.redirect("/storage/shared");
 });
 
 module.exports = {

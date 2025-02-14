@@ -34,11 +34,11 @@ const create = {
   },
   shareLink: async (ownerId, expiresAt, type, itemId) => {
     if (type === "folder")
-      return prisma.folder.create({
+      return prisma.shareLink.create({
         data: { ownerId, expiresAt, folderId: itemId },
       });
     if (type === "file")
-      return prisma.file.create({
+      return prisma.shareLink.create({
         data: { ownerId, expiresAt, fileId: itemId },
       });
     return null;
