@@ -7,15 +7,8 @@ const file = asyncHandler(async (req, res) => {
   }
   const ownerId = req.user.id;
   const parentId = req.params.folderId || null;
-  const { originalname, mimetype, size, destination } = req.file;
-  await create.file(
-    originalname,
-    ownerId,
-    size,
-    mimetype,
-    destination,
-    parentId
-  );
+  const { originalname, mimetype, size, path } = req.file;
+  await create.file(originalname, ownerId, size, mimetype, path, parentId);
   return res.redirect(req.originalUrl);
 });
 const folder = asyncHandler(async (req, res) => {

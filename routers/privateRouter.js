@@ -8,13 +8,13 @@ const upload = multer({ dest: "uploads/" });
 const { Router } = require("express");
 const router = Router();
 
-//mescilanous
+//get requests
 router.get("/", read.renderDir);
 router.get("/dir/:folderId", read.renderDir);
 router.get("/trash", read.renderTrash);
 router.get("/shared", read.renderShared);
-router.post("/download/:fileId", read.downloadFile);
-//files
+router.get("/download/:fileId", read.downloadFile);
+//files post
 router.post(
   "/file/upload",
   validate.Newfile,
@@ -25,13 +25,13 @@ router.post("/file/rename/:fileId", validate.string, update.fileName);
 router.post("/file/trash/:fileId", update.fileToTrash);
 router.post("/file/restore/:fileId", update.restoreFile);
 router.post("/file/delete/:fileId", dlt.file);
-//folders
+//folders post
 router.post("/folder/new", validate.string, create.folder);
 router.post("/folder/rename/:folderId", validate.string, update.folderName);
 router.post("/folder/trash/:folderId", update.folderToTrash);
 router.post("/folder/restore/:folderId", update.RestoreFolder);
 router.post("/folder/delete/:folderId", dlt.folder);
-//shared
+//shared post
 router.post("/shared/new", validate.shareInput, create.shareLink);
 router.post("/shared/delete/:linkId", dlt.shareLink);
 

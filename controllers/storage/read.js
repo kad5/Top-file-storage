@@ -1,5 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const { get, helpers } = require("../../db/queries");
+const path = require("path");
+const fs = require("fs");
 
 const renderDir = asyncHandler(async (req, res) => {
   const { id, username } = req.user;
@@ -42,8 +44,24 @@ const renderSharedPublic = asyncHandler(async (req, res) => {
   res.send("not allowed");
 });
 
-const downloadFile = asyncHandler((req, res) => {
-  res.render("dashboard");
+const downloadFile = asyncHandler(async (req, res) => {
+  const { fileId } = req.params;
+  const file = await get.fileById(fileId);
+  if (!file) return res.send("File not found");
+  const filePath = file.path;
+  const fullFilePath = path.join(__dirname, "..", "..", filePath);
+
+  if (fs.existsSync(fullFilePath)) {
+    res.download(fullFilePath, file.name, (err) => {
+      if (err) {
+        console.error("Error downloading file:", err);
+        res.status(500).send("Error downloading the file");
+      }
+    });
+  } else {
+    res.status(404).send("File does not exist in the file system");
+  }
+  return res.redirect(req.originalUrl);
 });
 
 module.exports = {
