@@ -8,21 +8,21 @@ const renderDir = asyncHandler(async (req, res) => {
   const folderId = req.params.folderId || null;
   const contents = await get.dirContents(id, folderId);
   const map = await helpers.generateDirTree(id);
-  res.render("dashboard", { username, contents, map });
+  res.render("dashboard", { username, contents, map, folderId });
 });
 
 const renderTrash = asyncHandler(async (req, res) => {
   const { id, username } = req.user;
   const contents = await get.trash(id);
   const map = await helpers.generateDirTree(id);
-  res.render("dashboard", { username, contents, map });
+  res.render("dashboard", { username, contents, map, folderId: null });
 });
 
 const renderShared = asyncHandler(async (req, res) => {
   const { id, username } = req.user;
   const contents = await get.allSharedByUser(id);
   const map = await helpers.generateDirTree(id);
-  res.render("dashboard", { username, contents, map });
+  res.render("dashboard", { username, contents, map, folderId: null });
 });
 
 const renderSharedPublic = asyncHandler(async (req, res) => {

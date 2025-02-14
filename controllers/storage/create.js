@@ -16,7 +16,9 @@ const file = asyncHandler(async (req, res) => {
 const folder = asyncHandler(async (req, res) => {
   const ownerId = req.user.id;
   const name = req.body.name;
-  const parentId = req.body.parentId || null;
+
+  const parentId = req.body.folderId || null;
+  console.log(parentId);
   await create.folder(name, ownerId, parentId);
 
   const referer = req.headers.referer || "/storage";

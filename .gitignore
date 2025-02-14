@@ -1,4 +1,4 @@
+uploads
 node_modules
 .env
 db/drive-queries.ts
-uploads

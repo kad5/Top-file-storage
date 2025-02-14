@@ -3,147 +3,146 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard - OdinBox</title>
-    <style>
-      /* Basic styling for layout */
-      .container {
-        display: flex;
-      }
-      .aside {
-        width: 250px;
-        padding: 10px;
-      }
-      .main-content {
-        flex-grow: 1;
-        padding: 20px;
-      }
-      .folder,
-      .file {
-        margin: 5px 0;
-        padding: 5px;
-      }
-      .folder-actions,
-      .file-actions {
-        margin-top: 5px;
-      }
-      .form-container {
-        margin-top: 20px;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-      }
-    </style>
+    <title>Document</title>
   </head>
   <body>
-    <h1>Welcome, <%= username %></h1>
-
-    <div class="container">
-      <!-- Aside for fast navigation -->
-      <aside class="aside">
-        <h3>Fast Navigation</h3>
-        <ul>
-          <% map.forEach((folder) => { %>
-          <li class="folder">
-            <button class="toggle-folder">+</button>
-            <a href="/dir/<%= folder.id %>"><%= folder.name %></a>
-            <!-- Subfolders and files within -->
-            <ul>
-              <% folder.children.forEach((subfolder) => { %>
-              <li class="folder">
-                <a href="/dir/<%= subfolder.id %>"><%= subfolder.name %></a>
-                <!-- File actions for subfolder -->
-                <div class="folder-actions">
-                  <button>Rename</button>
-                  <button>Delete</button>
-                </div>
-              </li>
-              <% }) %> <% folder.files.forEach((file) => { %>
-              <li class="file">
-                <span><%= file.name %></span>
-                <!-- File actions -->
-                <div class="file-actions">
-                  <button>Download</button>
-                  <button>Rename</button>
-                  <button>Send to Trash</button>
-                </div>
-              </li>
-              <% }) %>
-            </ul>
-          </li>
-          <% }) %>
-        </ul>
-        <a href="/storage">Root Directory</a>
-        <a href="/storage/trash">Trash</a>
-        <a href="/storage/shared">Shared</a>
-      </aside>
-
-      <!-- Main content area (folders and files) -->
-      <div class="main-content">
-        <h3>Directory Contents</h3>
-
-        <!-- Folder List -->
-        <h4>Folders</h4>
-        <ul>
-          <% contents.folders.forEach((folder) => { %>
-          <li class="folder">
-            <a href="/storage/dir/<%= folder.id %>"><%= folder.name %></a>
-            <div class="folder-actions">
-              <button>Rename</button>
-              <button>Send to Trash</button>
-            </div>
-          </li>
-          <% }) %>
-        </ul>
-
-        <!-- File List -->
-        <h4>Files</h4>
-        <ul>
-          <% contents.files.forEach((file) => { %>
-          <li class="file">
-            <span><%= file.name %></span>
-            <div class="file-actions">
-              <button>Download</button>
-              <button>Rename</button>
-              <button>Send to Trash</button>
-            </div>
-          </li>
-          <% }) %>
-        </ul>
-
-        <!-- Create New Folder Form -->
-        <div class="form-container">
-          <h4>Create New Folder</h4>
-          <form action="/storage/folder/new" method="POST">
-            <input type="text" name="name" placeholder="Folder Name" required />
-            <button type="submit">Create Folder</button>
-          </form>
+    <header>
+      <div class="wrapper">
+        <div>
+          <div class="logo">A</div>
+          <a href="">OdinBox</a>
         </div>
-
-        <!-- Upload New File Form -->
-        <div class="form-container">
-          <h4>Upload New File</h4>
-          <form
-            action="/storage/file/upload"
-            method="POST"
-            enctype="multipart/form-data"
-          >
-            <input type="file" name="file" required />
-            <button type="submit">Upload File</button>
-          </form>
-        </div>
+        <nav>
+          <ul>
+            <% if (username) { %>
+            <li>
+              <p>Welcome back, <%= username %></p>
+            </li>
+            <li><a href="/log-out">Log out</a></li>
+            <% } else { %>
+            <li><a href="/log-in">Log in</a></li>
+            <li><a href="/sign-up">Sign up</a></li>
+            <% } %>
+          </ul>
+        </nav>
       </div>
+    </header>
+    <div class="page wrapper">
+      <aside>
+        <div>
+          <a href="">Root Directory</a>
+        </div>
+        <div>
+          <a href="">Shared folder</a>
+        </div>
+        <div class="map"></div>
+        <div>
+          <a href="">Trash bin</a>
+        </div>
+      </aside>
+      <main>
+        <div class="top">
+          <div class="path"></div>
+          <div class="new">
+            <dialog>
+              <div class="form-container">
+                <h4>Create New Folder</h4>
+                <form action="/storage/folder/new" method="POST">
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="Folder Name"
+                    required
+                  />
+                  <input
+                    type="hidden"
+                    name="folderId"
+                    value="<%= folderId %>"
+                    required
+                  />
+                  <button type="submit">Create Folder</button>
+                </form>
+              </div>
+            </dialog>
+            <button>New folder</button>
+            <dialog>
+              <div class="form-container">
+                <h4>Upload New File</h4>
+                <form
+                  action="/storage/file/upload"
+                  method="POST"
+                  enctype="multipart/form-data"
+                >
+                  <input type="file" name="file" required />
+                  <input
+                    type="hidden"
+                    name="folderId"
+                    value="<%= folderId %>"
+                    required
+                  />
+                  <button type="submit">Upload File</button>
+                </form>
+              </div>
+            </dialog>
+            <button>File upload</button>
+          </div>
+        </div>
+        <div class="bottom">
+          <div class="content">
+            <div>Name</div>
+            <div>Last modified</div>
+            <div>Size</div>
+            <div>Action</div>
+          </div>
+          <ul class="content">
+            <% contents.folders.forEach((folder) => { %>
+            <li>
+              <div>
+                <a href="/storage/dir/<%= folder.id %>"><%= folder.name %></a>
+              </div>
+              <div>
+                <%= new Date(folder.updatedAt).toLocaleDateString('en-GB', {
+                year: 'numeric', month: 'short', day: 'numeric', hour:
+                'numeric', minute: 'numeric', hour12: true }) %>
+              </div>
+              <div></div>
+              <div>
+                <a href="/storage/folder/rename/<%= folder.id %>">rename</a>
+                <a href="/storage/folder/share/<%= folder.id %>">share</a>
+                <a href="/storage/folder/trash/<%= folder.id %>"
+                  >Send to trash</a
+                >
+                <a href="/storage/folder/details/<%= folder.id %>"
+                  >more details</a
+                >
+              </div>
+            </li>
+            <% }); %> <% contents.files.forEach((file) => { %>
+            <li>
+              <div><%= file.name %></div>
+              <div>
+                <%= new Date(file.updatedAt).toLocaleDateString('en-GB', { year:
+                'numeric', month: 'short', day: 'numeric', hour: 'numeric',
+                minute: 'numeric', hour12: true }) %>
+              </div>
+              <div><%= Math.round(file.size / 1024) %> kbs</div>
+              <div>
+                <a href="/storage/file/rename/<%= file.id %>">rename</a>
+                <a href="/storage/file/share/<%= file.id %>">share</a>
+                <a href="/storage/file/trash/<%= file.id %>">Send to trash</a>
+                <a href="/storage/file/details/<%= file.id %>">more details</a>
+              </div>
+            </li>
+            <% }); %>
+          </ul>
+        </div>
+      </main>
     </div>
-
-    <p><a href="/log-out">Log Out</a></p>
-
     <script>
-      // JavaScript to handle folder expand/collapse
-      document.querySelectorAll(".toggle-folder").forEach((button) => {
-        button.addEventListener("click", () => {
-          const folderList = button.nextElementSibling; // The <ul> of subfolders and files
-          folderList.style.display =
-            folderList.style.display === "none" ? "block" : "none";
-        });
+      const dialogBoxes = document.querySelectorAll("dialog");
+      dialogBoxes.forEach((box) => {
+        const openBtn = box.nextElementSibling;
+        openBtn.addEventListener("click", () => box.showModal());
       });
     </script>
   </body>
