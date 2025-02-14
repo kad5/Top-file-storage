@@ -1,14 +1,20 @@
 const asyncHandler = require("express-async-handler");
-const { get } = require("../../db/queries");
+const { dlt } = require("../../db/queries");
 
-const file = asyncHandler((req, res) => {
-  res.render("dashboard");
+const shareLink = asyncHandler(async (req, res) => {
+  const { linkId } = req.params;
+  await dlt.shareLink(linkId);
+  return res.redirect(req.originalUrl);
 });
-const folder = asyncHandler((req, res) => {
-  res.render("dashboard");
+const file = asyncHandler(async (req, res) => {
+  const { fileId } = req.params;
+  await dlt.file(fileId);
+  return res.redirect(req.originalUrl);
 });
-const shareLink = asyncHandler((req, res) => {
-  res.render("dashboard");
+const folder = asyncHandler(async (req, res) => {
+  const folderId = req.params.folderId || null;
+  await dlt.folder(folderId);
+  return res.redirect(req.originalUrl);
 });
 module.exports = {
   file,
