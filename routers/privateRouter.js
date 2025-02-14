@@ -8,7 +8,7 @@ const upload = multer({ dest: "uploads/" });
 const { Router } = require("express");
 const router = Router();
 
-//get requests
+//get requests all start with /storage
 router.get("/", read.renderDir);
 router.get("/dir/:folderId", read.renderDir);
 router.get("/trash", read.renderTrash);

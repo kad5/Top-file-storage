@@ -9,14 +9,18 @@ const file = asyncHandler(async (req, res) => {
   const parentId = req.params.folderId || null;
   const { originalname, mimetype, size, path } = req.file;
   await create.file(originalname, ownerId, size, mimetype, path, parentId);
-  return res.redirect(req.originalUrl);
+
+  const referer = req.headers.referer || "/storage";
+  return res.redirect(referer);
 });
 const folder = asyncHandler(async (req, res) => {
   const ownerId = req.user.id;
   const name = req.body.name;
   const parentId = req.body.parentId || null;
   await create.folder(name, ownerId, parentId);
-  return res.redirect(req.originalUrl);
+
+  const referer = req.headers.referer || "/storage";
+  return res.redirect(referer);
 });
 const shareLink = asyncHandler(async (req, res) => {
   const ownerId = req.user.id;

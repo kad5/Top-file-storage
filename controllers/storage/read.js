@@ -61,7 +61,8 @@ const downloadFile = asyncHandler(async (req, res) => {
   } else {
     res.status(404).send("File does not exist in the file system");
   }
-  return res.redirect(req.originalUrl);
+  const referer = req.headers.referer || "/storage";
+  return res.redirect(referer);
 });
 
 module.exports = {
