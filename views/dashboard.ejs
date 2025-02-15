@@ -3,14 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+    <title>OdinBox</title>
   </head>
   <body>
     <header>
-      <div class="wrapper">
+      <div class="header wrapper">
         <div>
-          <div class="logo">A</div>
-          <a href="">OdinBox</a>
+          <div class="logo">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="36px"
+              viewBox="0 -960 960 960"
+              width="36px"
+              fill="#f9d84b"
+            >
+              <path
+                d="M260-160q-91 0-155.5-63T40-377q0-78 47-139t123-78q25-92 100-149t170-57q117 0 198.5 81.5T760-520q69 8 114.5 59.5T920-340q0 75-52.5 127.5T740-160H260Zm0-80h480q42 0 71-29t29-71q0-42-29-71t-71-29h-60v-80q0-83-58.5-141.5T480-720q-83 0-141.5 58.5T280-520h-20q-58 0-99 41t-41 99q0 58 41 99t99 41Zm220-240Z"
+              />
+            </svg>
+          </div>
+          <a href="/">OdinBox</a>
         </div>
         <nav>
           <ul>
@@ -26,6 +39,7 @@
           </ul>
         </nav>
       </div>
+      <div class="separator"></div>
     </header>
     <div class="page wrapper">
       <aside>
@@ -77,7 +91,20 @@
                 </form>
               </div>
             </dialog>
-            <button>New folder</button>
+            <button>
+              New folder
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="#5f6368"
+              >
+                <path
+                  d="M560-320h80v-80h80v-80h-80v-80h-80v80h-80v80h80v80ZM160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640v400q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H447l-80-80H160v480Zm0 0v-480 480Z"
+                />
+              </svg>
+            </button>
             <dialog>
               <div class="form-container">
                 <h4>Upload New File</h4>
@@ -97,149 +124,174 @@
                 </form>
               </div>
             </dialog>
-            <button>File upload</button>
+            <button>
+              Upload file
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="#5f6368"
+              >
+                <path
+                  d="M440-200h80v-167l64 64 56-57-160-160-160 160 57 56 63-63v167ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"
+                />
+              </svg>
+            </button>
           </div>
           <% } %>
         </div>
         <div class="bottom">
           <% if (state !== "shared") { %>
-          <div class="content">
-            <div>Name</div>
-            <div>Last modified</div>
-            <div>Size</div>
-            <div>Action</div>
-          </div>
           <ul class="content">
+            <div class="first">Name</div>
+            <div class="first">Last modified</div>
+            <div class="first">Size</div>
+            <div class="first">Action</div>
             <% contents.folders.forEach((folder) => { %>
-            <li>
+            <div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="#5f6368"
+              >
+                <path
+                  d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640v400q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H447l-80-80H160v480Zm0 0v-480 480Z"
+                />
+              </svg>
+              <a href="/storage/dir/<%= folder.id %>"><%= folder.name %></a>
+            </div>
+            <div>
+              <%= new Date(folder.updatedAt).toLocaleDateString('en-GB', { year:
+              'numeric', month: 'short', day: 'numeric', hour: 'numeric',
+              minute: 'numeric', hour12: true }) %>
+            </div>
+            <div></div>
+            <div>
               <div>
-                <a href="/storage/dir/<%= folder.id %>"><%= folder.name %></a>
-              </div>
-              <div>
-                <%= new Date(folder.updatedAt).toLocaleDateString('en-GB', {
-                year: 'numeric', month: 'short', day: 'numeric', hour:
-                'numeric', minute: 'numeric', hour12: true }) %>
-              </div>
-              <div></div>
-              <div>
-                <div>
-                  <dialog>
-                    <form
-                      action="/storage/folder/rename/<%= folder.id %>"
-                      method="POST"
-                    >
-                      <button type="submit">Rename</button>
-                    </form>
-                  </dialog>
-                  <button>Rename</button>
-                </div>
-                <div>
-                  <dialog>
-                    <form action="/storage/shared/new" method="POST">
-                      <input type="datetime-local" name="expiresAt" />
-                      <input
-                        type="hidden"
-                        name="itemId"
-                        value="<%= folder.id %>"
-                      />
-                      <input type="hidden" name="type" value="folder" />
-                      <button type="submit">Share</button>
-                    </form>
-                  </dialog>
-                  <button>Share</button>
-                </div>
-                <% if (state === "trash") { %>
-                <div>
+                <dialog>
                   <form
-                    action="/storage/folder/restore/<%= folder.id %>"
+                    action="/storage/folder/rename/<%= folder.id %>"
                     method="POST"
                   >
-                    <button type="submit">Restore</button>
+                    <input type="text" name="newName" required />
+                    <button type="submit">Rename</button>
                   </form>
-                </div>
-                <% } else {%>
-                <div>
-                  <form
-                    action="/storage/folder/trash/<%= folder.id %>"
-                    method="POST"
-                  >
-                    <button type="submit">Send to Trash</button>
-                  </form>
-                </div>
-                <% } %>
-                <div>
-                  <button
-                    onclick="detailsReview(`<%= folder.name %>`,`<%=  folder.createdAt %>`,`<%=  folder.updatedAt %>`,`<%=  folder.ShareLinks %>`,`folder`,`coming soon`)"
-                  >
-                    More Details
-                  </button>
-                </div>
+                </dialog>
+                <button>Rename</button>
               </div>
-            </li>
+              <div>
+                <dialog>
+                  <form action="/storage/shared/new" method="POST">
+                    <input type="datetime-local" name="expiresAt" />
+                    <input
+                      type="hidden"
+                      name="itemId"
+                      value="<%= folder.id %>"
+                    />
+                    <input type="hidden" name="type" value="folder" />
+                    <button type="submit">Share</button>
+                  </form>
+                </dialog>
+                <button>Share</button>
+              </div>
+              <% if (state === "trash") { %>
+              <div>
+                <form
+                  action="/storage/folder/restore/<%= folder.id %>"
+                  method="POST"
+                >
+                  <button type="submit">Restore</button>
+                </form>
+              </div>
+              <% } else {%>
+              <div>
+                <form
+                  action="/storage/folder/trash/<%= folder.id %>"
+                  method="POST"
+                >
+                  <button type="submit">Send to Trash</button>
+                </form>
+              </div>
+              <% } %>
+              <div>
+                <button
+                  onclick="detailsReview(`<%= folder.name %>`,`<%=  folder.createdAt %>`,`<%=  folder.updatedAt %>`,`<%=  folder.ShareLinks %>`,`folder`,`coming soon`)"
+                >
+                  More Details
+                </button>
+              </div>
+            </div>
             <% }); %> <% contents.files.forEach((file) => { %>
-            <li>
-              <div><%= file.name %></div>
+            <div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="#5f6368"
+              >
+                <path
+                  d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"
+                />
+              </svg>
+              <p href=""><%= file.name %></p>
+            </div>
+            <div>
+              <%= new Date(file.updatedAt).toLocaleDateString('en-GB', { year:
+              'numeric', month: 'short', day: 'numeric', hour: 'numeric',
+              minute: 'numeric', hour12: true }) %>
+            </div>
+            <div><%= Math.round(file.size / 1024) %> kbs</div>
+            <div>
               <div>
-                <%= new Date(file.updatedAt).toLocaleDateString('en-GB', { year:
-                'numeric', month: 'short', day: 'numeric', hour: 'numeric',
-                minute: 'numeric', hour12: true }) %>
-              </div>
-              <div><%= Math.round(file.size / 1024) %> kbs</div>
-              <div>
-                <div>
-                  <dialog>
-                    <form
-                      action="/storage/file/rename/<%= file.id %>"
-                      method="POST"
-                    >
-                      <button type="submit">Rename</button>
-                    </form>
-                  </dialog>
-                  <button>Rename</button>
-                </div>
-                <div>
-                  <dialog>
-                    <form action="/storage/shared/new" method="POST">
-                      <input type="datetime-local" name="expiresAt" />
-                      <input
-                        type="hidden"
-                        name="itemId"
-                        value="<%= file.id %>"
-                      />
-                      <input type="hidden" name="type" value="file" />
-                      <button type="submit">Share</button>
-                    </form>
-                  </dialog>
-                  <button>Share</button>
-                </div>
-                <% if (state === "trash") { %>
-                <div>
+                <dialog>
                   <form
-                    action="/storage/file/trash/<%= file.id %>"
+                    action="/storage/file/rename/<%= file.id %>"
                     method="POST"
                   >
-                    <button type="submit">Restore</button>
+                    <button type="submit">Rename</button>
                   </form>
-                </div>
-                <% } else {%>
-                <div>
-                  <form
-                    action="/storage/file/restore/<%= file.id %>"
-                    method="POST"
-                  >
-                    <button type="submit">Send to Trash</button>
-                  </form>
-                </div>
-                <% } %>
-                <div>
-                  <button
-                    onclick="detailsReview(`<%= file.name %>`,`<%=  file.createdAt %>`,`<%=  file.updatedAt %>`,`<%=  file.ShareLinks %>`,`<%=  file.fileType %>`,`<%=  file.size %>`)"
-                  >
-                    More Details
-                  </button>
-                </div>
+                </dialog>
+                <button>Rename</button>
               </div>
-            </li>
+              <div>
+                <dialog>
+                  <form action="/storage/shared/new" method="POST">
+                    <input type="datetime-local" name="expiresAt" />
+                    <input type="hidden" name="itemId" value="<%= file.id %>" />
+                    <input type="hidden" name="type" value="file" />
+                    <button type="submit">Share</button>
+                  </form>
+                </dialog>
+                <button>Share</button>
+              </div>
+              <% if (state === "trash") { %>
+              <div>
+                <form action="/storage/file/trash/<%= file.id %>" method="POST">
+                  <button type="submit">Restore</button>
+                </form>
+              </div>
+              <% } else {%>
+              <div>
+                <form
+                  action="/storage/file/restore/<%= file.id %>"
+                  method="POST"
+                >
+                  <button type="submit">Send to Trash</button>
+                </form>
+              </div>
+              <% } %>
+              <div>
+                <button
+                  onclick="detailsReview(`<%= file.name %>`,`<%=  file.createdAt %>`,`<%=  file.updatedAt %>`,`<%=  file.ShareLinks %>`,`<%=  file.fileType %>`,`<%=  file.size %>`)"
+                >
+                  More Details
+                </button>
+              </div>
+            </div>
             <% }); %>
           </ul>
           <% } else {%>
