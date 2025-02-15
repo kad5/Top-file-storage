@@ -298,12 +298,22 @@ const helpers = {
   },
 
   generateDirTree: async (ownerId) => {
-    const folders = await prisma.folder.findMany({
-      where: { ownerId },
-    });
-    const files = await prisma.file.findMany({
-      where: { ownerId },
-    });
+    const [folders, files] = await Promise.all([
+      prisma.folder.findMany({
+        where: {
+          ownerId,
+          isTrash: false,
+        },
+        orderBy: { createdAt: "asc" },
+      }),
+      prisma.file.findMany({
+        where: {
+          ownerId,
+          isTrash: false,
+        },
+        orderBy: { createdAt: "asc" },
+      }),
+    ]);
 
     const dirMap = new Map();
     folders.forEach((folder) => {
@@ -313,11 +323,13 @@ const helpers = {
     folders.forEach((folder) => {
       if (folder.parentId) {
         const parentFolder = dirMap.get(folder.parentId);
-        if (parentFolder) {
-          parentFolder.children.push(folder);
+        const mappedFolder = dirMap.get(folder.id);
+        if (parentFolder && mappedFolder) {
+          parentFolder.children.push(mappedFolder);
         }
       }
     });
+
     files.forEach((file) => {
       const parentFolder = dirMap.get(file.parentId);
       if (parentFolder) {

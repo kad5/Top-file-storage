@@ -6,14 +6,22 @@ const fs = require("fs");
 const renderDir = asyncHandler(async (req, res) => {
   const { id, username } = req.user;
   const folderId = req.params.folderId || null;
+  const folderName = folderId
+    ? (await get.folderById(folderId)).name
+    : "root directory";
   const contents = await get.dirContents(id, folderId);
-  const map = await helpers.generateDirTree(id);
+  const fullMap = await helpers.generateDirTree(id);
+  const map = Array.from(fullMap.values()).filter(
+    (obj) => obj.parentId === null
+  );
+
   res.render("dashboard", {
     state: "storage",
     username,
     contents,
     map,
     folderId,
+    folderName,
   });
 });
 

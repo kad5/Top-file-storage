@@ -51,7 +51,101 @@
           <a href="/storage/shared">Shared folder</a>
         </div>
         <% } %>
-        <div class="map"></div>
+        <div>
+          <p>Contents tree</p>
+        </div>
+        <div class="map">
+          <ul class="tree">
+            <% function renderTree(array) { %> <% array.forEach(item => { %>
+            <li class="tree-item">
+              <div class="folder-header">
+                <button class="toggle-btn" onclick="toggleFolder(this)">
+                  <svg
+                    class="folder-icon collapsed"
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="24px"
+                    viewBox="0 -960 960 960"
+                    width="24px"
+                    fill="#5f6368"
+                  >
+                    <path
+                      d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640v400q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H447l-80-80H160v480Zm0 0v-480 480Z"
+                    />
+                  </svg>
+                  <svg
+                    class="folder-icon expanded"
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="24px"
+                    viewBox="0 -960 960 960"
+                    width="24px"
+                    fill="#5f6368"
+                  >
+                    <path
+                      d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640H447l-80-80H160v480l96-320h684L837-217q-8 26-29.5 41.5T760-160H160Zm84-80h516l72-240H316l-72 240Zm0 0 72-240-72 240Zm-84-400v-80 80Z"
+                    />
+                  </svg>
+                </button>
+                <a href="/storage/dir/<%= item.id %>"><%= item.name %></a>
+              </div>
+              <div class="folder-content collapsed">
+                <% if (item.children && item.children.length > 0) { %>
+                <ul class="folders">
+                  <% renderTree(item.children, false) %>
+                </ul>
+                <% } %> <% if (item.files && item.files.length > 0) { %>
+                <ul class="files">
+                  <% item.files.forEach(file => { %>
+                  <li class="file-item">
+                    <svg
+                      class="file-icon"
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24px"
+                      viewBox="0 -960 960 960"
+                      width="24px"
+                      fill="#5f6368"
+                    >
+                      <path
+                        d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"
+                      />
+                    </svg>
+                    <a href="/storage/file/<%= file.id %>"><%= file.name %></a>
+                  </li>
+                  <% }); %>
+                </ul>
+                <% } %>
+              </div>
+            </li>
+            <% }); %> <% } %>
+            <div class="folder-content">
+              <!-- ernder root folders -->
+              <% renderTree(map) %>
+              <!-- ernder root files if any -->
+              <% if (contents && contents.files && contents.files.length > 0 &&
+              !folderId) { %>
+              <ul class="files">
+                <% contents.files.forEach(file => { %>
+                <li class="file-item">
+                  <svg
+                    class="file-icon"
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="24px"
+                    viewBox="0 -960 960 960"
+                    width="24px"
+                    fill="#5f6368"
+                  >
+                    <path
+                      d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"
+                    />
+                  </svg>
+                  <a href="/storage/file/<%= file.id %>"><%= file.name %></a>
+                </li>
+                <% }); %>
+              </ul>
+              <% } %>
+            </div>
+          </ul>
+        </div>
+
         <% if (username) { %>
         <div>
           <a href="/storage/trash">Trash bin</a>
@@ -62,7 +156,7 @@
         <div class="top">
           <div class="path">
             <% if (state === "storage") { %>
-            <p>path to the file</p>
+            <p><%= folderName %></p>
             <% } %> <% if (state === "trash") { %>
             <p>Trash bin</p>
             <% } %> <% if (state === "shared") { %>
@@ -314,6 +408,13 @@
         console.log(shares);
         console.log(type);
         console.log(size);
+      }
+
+      function toggleFolder(button) {
+        button.classList.toggle("active");
+        const folderContent =
+          button.closest(".folder-header").nextElementSibling;
+        folderContent.classList.toggle("collapsed");
       }
     </script>
   </body>

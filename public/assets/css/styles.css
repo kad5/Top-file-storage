@@ -27,7 +27,7 @@ button {
   background: transparent;
 }
 
-button:hover {
+button:hover:not(.toggle-btn) {
   background: #2626262f;
   border: 1px solid transparent;
 }
@@ -92,15 +92,15 @@ aside {
   > div {
     padding: 6px 12px;
   }
-  > div:nth-child(3) {
+  > div:nth-child(4) {
     margin-bottom: auto;
   }
-  div:hover {
+  > div:hover:not(div:nth-child(3)) {
     background: linear-gradient(90deg, #f9d84b 0%, ivory 90%);
   }
-  > div:nth-child(3):hover {
-    background: transparent;
-  }
+}
+.map:hover {
+  background: transparent !important;
 }
 
 .path {
@@ -167,10 +167,21 @@ main {
 .content a:hover {
   color: rgb(1, 62, 177);
 }
+
+.content div:has(a:hover) {
+  svg {
+    fill: rgb(1, 62, 177);
+  }
+}
+
 .content > div:nth-child(4n + 4) {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+li ul {
+  margin-left: 20px;
 }
 
 dialog {
@@ -181,4 +192,55 @@ dialog {
 }
 dialog::backdrop {
   backdrop-filter: blur(2px);
+}
+/**/
+.map .tree {
+  margin-left: 12px;
+}
+
+.folder-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.folder-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.folder-icon.expanded {
+  display: none;
+}
+
+.folder-content.collapsed {
+  display: none;
+}
+
+.toggle-btn.active .folder-icon.collapsed {
+  display: none;
+}
+
+.toggle-btn.active .folder-icon.expanded {
+  display: block;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.file-icon {
+  width: 24px;
+  height: 24px;
 }
