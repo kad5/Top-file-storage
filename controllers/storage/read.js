@@ -108,22 +108,25 @@ const renderSharedPublic = asyncHandler(async (req, res) => {
 const downloadFile = asyncHandler(async (req, res) => {
   const { fileId } = req.params;
   const file = await get.fileById(fileId);
-  if (!file) return res.send("File not found");
-  const filePath = file.path;
+  if (!file) {
+    return res.render("404");
+  }
+  const filePath = file.cloudId;
   const fullFilePath = path.join(__dirname, "..", "..", filePath);
+  if (!fs.existsSync(fullFilePath)) {
+    return res.render("404");
+  }
 
-  if (fs.existsSync(fullFilePath)) {
-    res.download(fullFilePath, file.name, (err) => {
-      if (err) {
-        console.error("Error downloading file:", err);
+  res.setHeader("Content-Disposition", `attachment; filename="${file.name}"`);
+
+  res.sendFile(fullFilePath, (err) => {
+    if (err) {
+      console.error("Error downloading file:", err);
+      if (!res.headersSent) {
         res.status(500).send("Error downloading the file");
       }
-    });
-  } else {
-    res.status(404).send("File does not exist in the file system");
-  }
-  const referer = req.headers.referer || "/storage";
-  return res.redirect(referer);
+    }
+  });
 });
 
 module.exports = {
