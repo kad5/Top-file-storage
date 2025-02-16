@@ -379,7 +379,7 @@
               </svg>
 
               <% if (view === "private") { %>
-              <a href="storage/download/<%= file.id %>"><%= file.name %></a>
+              <a href="/storage/download/<%= file.id %>"><%= file.name %></a>
               <% } else { %>
               <a href="/download/shared/<%= file.id %>"><%= file.name %></a>
               <% } %>
@@ -398,6 +398,8 @@
                     action="/storage/file/rename/<%= file.id %>"
                     method="POST"
                   >
+                    <h4>enter the new name</h4>
+                    <input type="text" name="newName" required />
                     <button type="submit">Rename</button>
                   </form>
                 </dialog>
