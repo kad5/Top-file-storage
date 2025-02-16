@@ -391,7 +391,20 @@
             </div>
             <div><%= Math.round(file.size / 1024) %> kbs</div>
             <div>
-              <% if (view === "private") { %>
+              <% if (view === "private") { %> <% if (state === "trash") { %>
+              <div>
+                <dialog>
+                  <form
+                    action="/storage/file/delete/<%= file.id %>"
+                    method="POST"
+                  >
+                    <h4>are you sure you want to delete?</h4>
+                    <button type="submit">delete</button>
+                  </form>
+                </dialog>
+                <button>delete</button>
+              </div>
+              <% } else {%>
               <div>
                 <dialog>
                   <form
@@ -405,7 +418,7 @@
                 </dialog>
                 <button>Rename</button>
               </div>
-              <% if (state !== "trash") { %>
+              <% } %> <% if (state !== "trash") { %>
               <div>
                 <dialog>
                   <form action="/storage/shared/new" method="POST">
