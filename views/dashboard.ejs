@@ -405,6 +405,7 @@
                 </dialog>
                 <button>Rename</button>
               </div>
+              <% if (state !== "trash") { %>
               <div>
                 <dialog>
                   <form action="/storage/shared/new" method="POST">
@@ -416,18 +417,18 @@
                 </dialog>
                 <button>Share</button>
               </div>
-              <% if (state === "trash") { %>
-              <div>
-                <form action="/storage/file/trash/<%= file.id %>" method="POST">
-                  <button type="submit">Restore</button>
-                </form>
-              </div>
-              <% } else {%>
+              <% } %> <% if (state === "trash") { %>
               <div>
                 <form
                   action="/storage/file/restore/<%= file.id %>"
                   method="POST"
                 >
+                  <button type="submit">Restore</button>
+                </form>
+              </div>
+              <% } else {%>
+              <div>
+                <form action="/storage/file/trash/<%= file.id %>" method="POST">
                   <button type="submit">Send to Trash</button>
                 </form>
               </div>
