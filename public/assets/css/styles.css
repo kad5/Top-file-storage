@@ -36,6 +36,44 @@ body {
   background-color: ivory;
 }
 
+body:has(.logsign) {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+  }
+}
+
+.logsign {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+  padding: 48px 72px;
+  border: 1px solid rgba(0, 185, 185, 0.178);
+  border-radius: 12px;
+  background-color: rgba(255, 238, 224, 0.342);
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+  }
+  a {
+    font-weight: 600;
+  }
+  input {
+    padding: 4px 24px;
+    border: 1px solid rgba(0, 185, 185, 0.178);
+  }
+}
+
 .wrapper {
   margin: auto;
 }

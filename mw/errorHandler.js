@@ -1,3 +1,3 @@
 module.exports = errorHandler = (err, req, res, next) => {
-  console.log(`your error is:  ${err}`);
+  res.send("internal server error, we are working on it");
 };

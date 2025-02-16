@@ -42,6 +42,10 @@ app.use(passport.session());
 
 app.use("/", publicRouter);
 app.use("/storage", access.privateOnly, privateRouter);
+app.use("/", (req, res) => {
+  res.statusCode = 400;
+  res.render("404");
+});
 app.use(errorHandler);
 
 // init the server
