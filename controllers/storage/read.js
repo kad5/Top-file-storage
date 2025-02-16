@@ -75,9 +75,9 @@ const renderSharedPublic = asyncHandler(async (req, res) => {
 
   const shareLink = await get.shareDetails(linkId);
   if (!shareLink) return res.send("404");
-
-  const { expiresAt, ownerId } = shareLink;
+  const headFolderId = shareLink.folderId;
   const folderId = req.params.folderId || shareLink.folderId;
+  const { expiresAt, ownerId } = shareLink;
 
   //function to check expiry
   if (folderId) {
@@ -87,7 +87,7 @@ const renderSharedPublic = asyncHandler(async (req, res) => {
     const contents = await get.dirContents(ownerId, folderId);
     const listContents = contents;
     const fullMap = await helpers.generateDirTree(ownerId);
-    const folder = fullMap.get(folderId);
+    const folder = fullMap.get(headFolderId);
     const map = [folder];
     //function to select from the map
     return res.render("dashboard", {

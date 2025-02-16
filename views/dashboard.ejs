@@ -85,7 +85,13 @@
                     />
                   </svg>
                 </button>
+                <% if (view === "private") { %>
                 <a href="/storage/dir/<%= item.id %>"><%= item.name %></a>
+                <% } else { %>
+                <a href="/shared/<%= linkId %>/<%= item.id %>"
+                  ><%= item.name %></a
+                >
+                <% } %>
               </div>
               <div class="folder-content collapsed">
                 <% if (item.children && item.children.length > 0) { %>
@@ -270,7 +276,7 @@
             </div>
             <div></div>
             <div>
-              <% if (state === "trash") { %>
+              <% if (view === "private") { %> <% if (state === "trash") { %>
               <div>
                 <dialog>
                   <form
@@ -331,7 +337,7 @@
                   <button type="submit">Send to Trash</button>
                 </form>
               </div>
-              <% } %>
+              <% } %> <% } %>
               <div>
                 <dialog class="details">
                   <div>
@@ -366,6 +372,7 @@
             </div>
             <div><%= Math.round(file.size / 1024) %> kbs</div>
             <div>
+              <% if (view === "private") { %>
               <div>
                 <dialog>
                   <form
@@ -403,7 +410,7 @@
                   <button type="submit">Send to Trash</button>
                 </form>
               </div>
-              <% } %>
+              <% } %> <% } %>
               <div>
                 <dialog class="details">
                   <div>
