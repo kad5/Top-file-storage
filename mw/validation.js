@@ -1,3 +1,6 @@
+const asyncHandler = require("express-async-handler");
+const { body, validationResult } = require("express-validator");
+
 const signUp = (req, res, next) => {
   console.log("valid");
   next();

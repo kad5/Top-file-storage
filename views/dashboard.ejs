@@ -478,7 +478,7 @@
             <div>
               <dialog>
                 <div>
-                  <p>http://localhost:4000/shared/<%= folder.id %></p>
+                  <p><%= url %>/shared/<%= folder.id %></p>
                 </div>
               </dialog>
               <button>View</button>
@@ -534,9 +534,7 @@
             <div>
               <dialog>
                 <div>
-                  <p>
-                    http://localhost:4000/download/shared/<%= file.file.id %>
-                  </p>
+                  <p><%= url %>/download/shared/<%= file.file.id %></p>
                 </div>
               </dialog>
               <button>View</button>

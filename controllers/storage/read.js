@@ -55,6 +55,7 @@ const renderShared = asyncHandler(async (req, res) => {
   const map = Array.from(fullMap.values()).filter(
     (obj) => obj.parentId === null
   );
+  const url = process.env.BASE_URL;
 
   res.render("dashboard", {
     state: "shared",
@@ -64,6 +65,7 @@ const renderShared = asyncHandler(async (req, res) => {
     contents,
     listContents,
     map,
+    url,
   });
 });
 
@@ -79,7 +81,11 @@ const renderSharedPublic = asyncHandler(async (req, res) => {
   const folderId = req.params.folderId || shareLink.folderId;
   const { expiresAt, ownerId } = shareLink;
 
-  //function to check expiry
+  const today = new Date();
+  const expiryDate = new Date(expiresAt);
+
+  if (expiryDate < today) return res.render("unauth");
+
   if (folderId) {
     const folderName = folderId
       ? (await get.folderById(folderId)).name
@@ -89,7 +95,6 @@ const renderSharedPublic = asyncHandler(async (req, res) => {
     const fullMap = await helpers.generateDirTree(ownerId);
     const folder = fullMap.get(headFolderId);
     const map = [folder];
-    //function to select from the map
     return res.render("dashboard", {
       state: "storage",
       view: "public",
