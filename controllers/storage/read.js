@@ -10,6 +10,7 @@ const renderDir = asyncHandler(async (req, res) => {
     ? (await get.folderById(folderId)).name
     : "root directory";
   const contents = await get.dirContents(id, folderId);
+  const listContents = contents;
   const fullMap = await helpers.generateDirTree(id);
   const map = Array.from(fullMap.values()).filter(
     (obj) => obj.parentId === null
@@ -17,60 +18,88 @@ const renderDir = asyncHandler(async (req, res) => {
 
   res.render("dashboard", {
     state: "storage",
+    view: "private",
     username,
-    contents,
-    map,
     folderId,
     folderName,
+    contents,
+    listContents,
+    map,
   });
 });
 
 const renderTrash = asyncHandler(async (req, res) => {
   const { id, username } = req.user;
   const contents = await get.trash(id);
-  const map = await helpers.generateDirTree(id);
+  const listContents = await get.dirContents(id, null);
+  const fullMap = await helpers.generateDirTree(id);
+  const map = Array.from(fullMap.values()).filter(
+    (obj) => obj.parentId === null
+  );
   res.render("dashboard", {
     state: "trash",
+    view: "private",
     username,
-    contents,
-    map,
     folderId: null,
+    contents,
+    listContents,
+    map,
   });
 });
 
 const renderShared = asyncHandler(async (req, res) => {
   const { id, username } = req.user;
   const contents = await get.allSharedByUser(id);
-  const map = await helpers.generateDirTree(id);
+  const listContents = await get.dirContents(id, null);
+  const fullMap = await helpers.generateDirTree(id);
+  const map = Array.from(fullMap.values()).filter(
+    (obj) => obj.parentId === null
+  );
+
   res.render("dashboard", {
     state: "shared",
+    view: "private",
     username,
-    contents,
-    map,
     folderId: null,
+    contents,
+    listContents,
+    map,
   });
 });
 
 const renderSharedPublic = asyncHandler(async (req, res) => {
-  //router.get("/shared/:linkId", read.renderSharedPublic);
+  // router.get("/shared/:linkId/", read.renderSharedPublic);
+  // router.get("/shared/:linkId/:folderId", read.renderSharedPublic);
   const username = req.user?.username || null;
-  const linkId = req.params.folderId || null;
+  const linkId = req.params.linkId || null;
 
-  const shareLink = await read.shareDetails(linkId);
+  const shareLink = await get.shareDetails(linkId);
   if (!shareLink) return res.send("404");
 
-  const { expiresAt, ownerId, folderId } = shareLink;
+  const { expiresAt, ownerId } = shareLink;
+  const folderId = req.params.folderId || shareLink.folderId;
+
   //function to check expiry
   if (folderId) {
+    const folderName = folderId
+      ? (await get.folderById(folderId)).name
+      : "root directory";
     const contents = await get.dirContents(ownerId, folderId);
-    const map = await helpers.generateDirTree(ownerId);
+    const listContents = contents;
+    const fullMap = await helpers.generateDirTree(ownerId);
+    const folder = fullMap.get(folderId);
+    const map = [folder];
     //function to select from the map
     return res.render("dashboard", {
       state: "storage",
+      view: "public",
       username,
-      contents,
-      map,
       folderId,
+      folderName,
+      contents,
+      listContents,
+      map,
+      linkId,
     });
   }
   res.send("not allowed");

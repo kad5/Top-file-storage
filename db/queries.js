@@ -281,7 +281,6 @@ const helpers = {
     const folderIds = [];
     const fileIds = [];
     const stack = [folderId];
-
     while (stack.length) {
       const currentFolderId = stack.pop();
       const { folders, files } = await get.dirContents(

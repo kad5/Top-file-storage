@@ -7,7 +7,7 @@ const router = Router();
 
 //router.get("/", (req, res) => res.render("home"));
 router.get("/shared/:linkId/", read.renderSharedPublic);
-
+router.get("/shared/:linkId/:folderId", read.renderSharedPublic);
 router
   .route("/sign-up")
   .get(access.publicOnly, (req, res) =>

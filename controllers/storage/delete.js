@@ -11,14 +11,13 @@ const shareLink = asyncHandler(async (req, res) => {
 const file = asyncHandler(async (req, res) => {
   const { fileId } = req.params;
   await dlt.file(fileId);
-
   const referer = req.headers.referer || "/storage";
   return res.redirect(referer);
 });
 const folder = asyncHandler(async (req, res) => {
+  const { id } = req.user;
   const folderId = req.params.folderId || null;
-  await dlt.folder(folderId);
-
+  await dlt.folder(id, folderId);
   const referer = req.headers.referer || "/storage";
   return res.redirect(referer);
 });

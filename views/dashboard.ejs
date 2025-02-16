@@ -120,10 +120,10 @@
               <!-- ernder root folders -->
               <% renderTree(map) %>
               <!-- ernder root files if any -->
-              <% if (contents && contents.files && contents.files.length > 0 &&
-              !folderId) { %>
+              <% if (listContents && listContents.files &&
+              listContents.files.length > 0 && !folderId) { %>
               <ul class="files">
-                <% contents.files.forEach(file => { %>
+                <% listContents.files.forEach(file => { %>
                 <li class="file-item">
                   <svg
                     class="file-icon"
@@ -167,8 +167,8 @@
           <div class="new">
             <dialog>
               <div class="form-container">
-                <h4>Create New Folder</h4>
                 <form action="/storage/folder/new" method="POST">
+                  <h4>Create New Folder</h4>
                   <input
                     type="text"
                     name="name"
@@ -201,12 +201,12 @@
             </button>
             <dialog>
               <div class="form-container">
-                <h4>Upload New File</h4>
                 <form
                   action="/storage/file/upload"
                   method="POST"
                   enctype="multipart/form-data"
                 >
+                  <h4>Upload New File</h4>
                   <input type="file" name="file" required />
                   <input
                     type="hidden"
@@ -255,7 +255,13 @@
                   d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640v400q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H447l-80-80H160v480Zm0 0v-480 480Z"
                 />
               </svg>
+              <% if (view === "private") { %>
               <a href="/storage/dir/<%= folder.id %>"><%= folder.name %></a>
+              <% } else { %>
+              <a href="/shared/<%= linkId %>/<%= folder.id %>"
+                ><%= folder.name %></a
+              >
+              <% } %>
             </div>
             <div>
               <%= new Date(folder.updatedAt).toLocaleDateString('en-GB', { year:
@@ -264,18 +270,34 @@
             </div>
             <div></div>
             <div>
+              <% if (state === "trash") { %>
+              <div>
+                <dialog>
+                  <form
+                    action="/storage/folder/delete/<%= folder.id %>"
+                    method="POST"
+                  >
+                    <h4>are you sure you want to delete?</h4>
+                    <button type="submit">delete</button>
+                  </form>
+                </dialog>
+                <button>delete</button>
+              </div>
+              <% } else {%>
               <div>
                 <dialog>
                   <form
                     action="/storage/folder/rename/<%= folder.id %>"
                     method="POST"
                   >
+                    <h4>enter the new name</h4>
                     <input type="text" name="newName" required />
                     <button type="submit">Rename</button>
                   </form>
                 </dialog>
                 <button>Rename</button>
               </div>
+              <% } %> <% if (state !== "trash") { %>
               <div>
                 <dialog>
                   <form action="/storage/shared/new" method="POST">
@@ -291,7 +313,7 @@
                 </dialog>
                 <button>Share</button>
               </div>
-              <% if (state === "trash") { %>
+              <% } %> <% if (state === "trash") { %>
               <div>
                 <form
                   action="/storage/folder/restore/<%= folder.id %>"
@@ -311,11 +333,15 @@
               </div>
               <% } %>
               <div>
-                <button
-                  onclick="detailsReview(`<%= folder.name %>`,`<%=  folder.createdAt %>`,`<%=  folder.updatedAt %>`,`<%=  folder.ShareLinks %>`,`folder`,`coming soon`)"
-                >
-                  More Details
-                </button>
+                <dialog class="details">
+                  <div>
+                    <p>Name: <%= folder.name %></p>
+                    <p>Type: folder</p>
+                    <p>Created at: <%= folder.createdAt %></p>
+                    <p>Last modified: <%= folder.updatedAt %></p>
+                  </div>
+                </dialog>
+                <button>More Details</button>
               </div>
             </div>
             <% }); %> <% contents.files.forEach((file) => { %>
@@ -379,17 +405,137 @@
               </div>
               <% } %>
               <div>
-                <button
-                  onclick="detailsReview(`<%= file.name %>`,`<%=  file.createdAt %>`,`<%=  file.updatedAt %>`,`<%=  file.ShareLinks %>`,`<%=  file.fileType %>`,`<%=  file.size %>`)"
-                >
-                  More Details
-                </button>
+                <dialog class="details">
+                  <div>
+                    <p>Name: <%= file.name %></p>
+                    <p>Type: <%= file.fileType %></p>
+                    <p>Created at: <%= file.createdAt %></p>
+                    <p>Last modified: <%= file.updatedAt %></p>
+                    <p>Size: <%= file.size %></p>
+                  </div>
+                </dialog>
+                <button>More Details</button>
               </div>
             </div>
             <% }); %>
           </ul>
           <% } else {%>
-          <p>shared</p>
+          <ul class="content">
+            <div class="first">Name</div>
+            <div class="first">Expiry time</div>
+            <div class="first">Public link</div>
+            <div class="first">Action</div>
+
+            <!-- Loop over folders -->
+            <% contents.folders.forEach((folder) => { %>
+            <div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="#5f6368"
+              >
+                <path
+                  d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640v400q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H447l-80-80H160v480Zm0 0v-480 480Z"
+                />
+              </svg>
+              <a href="/storage/dir/<%= folder.folder.id %>"
+                ><%= folder.folder.name %></a
+              >
+            </div>
+            <div>
+              <%= new Date(folder.expiresAt).toLocaleDateString('en-GB', { year:
+              'numeric', month: 'short', day: 'numeric', hour: 'numeric',
+              minute: 'numeric', hour12: true }) %>
+            </div>
+            <div>
+              <dialog>
+                <div>
+                  <p>http://localhost:4000/shared/<%= folder.id %></p>
+                </div>
+              </dialog>
+              <button>View</button>
+            </div>
+            <div>
+              <div>
+                <dialog>
+                  <form
+                    action="/storage/shared/delete/<%= folder.id %>"
+                    method="POST"
+                  >
+                    <h4>Are you sure you want to unshare?</h4>
+                    <button type="submit">Confirm</button>
+                  </form>
+                </dialog>
+                <button>Unshare</button>
+              </div>
+              <div>
+                <dialog class="details">
+                  <div>
+                    <p>Name: <%= folder.folder.name %></p>
+                    <p>Type: Folder</p>
+                    <p>Created at: <%= folder.folder.createdAt %></p>
+                    <p>Last modified: <%= folder.folder.updatedAt %></p>
+                  </div>
+                </dialog>
+                <button>More Details</button>
+              </div>
+            </div>
+            <% }); %>
+
+            <!-- Loop over files -->
+            <% contents.files.forEach((file) => { %>
+            <div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="#5f6368"
+              >
+                <path
+                  d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"
+                />
+              </svg>
+              <p><%= file.file.name %></p>
+            </div>
+            <div>
+              <%= new Date(file.expiresAt).toLocaleDateString('en-GB', { year:
+              'numeric', month: 'short', day: 'numeric', hour: 'numeric',
+              minute: 'numeric', hour12: true }) %>
+            </div>
+            <div></div>
+            <div>
+              <div>
+                <dialog>
+                  <form
+                    action="/storage/shared/delete/<%= file.id %>"
+                    method="POST"
+                  >
+                    <h4>Are you sure you want to unshare?</h4>
+                    <button type="submit">Confirm</button>
+                  </form>
+                </dialog>
+                <button>Unshare</button>
+              </div>
+              <div>
+                <dialog class="details">
+                  <div>
+                    <p>Name: <%= file.file.name %></p>
+                    <p>Type: <%= file.file.fileType %></p>
+                    <p>Created at: <%= file.file.createdAt %></p>
+                    <p>Last modified: <%= file.file.updatedAt %></p>
+                    <p>Size: <%= file.file.size %></p>
+                    <!-- Fixed typo from filefile.size to file.file.size -->
+                  </div>
+                </dialog>
+                <button>More Details</button>
+              </div>
+            </div>
+            <% }); %>
+          </ul>
+
           <% } %>
         </div>
       </main>
