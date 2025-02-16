@@ -103,6 +103,10 @@ aside {
   background: transparent !important;
 }
 
+.map {
+  overflow-y: scroll;
+}
+
 .path {
   margin-block: auto;
 }
@@ -257,4 +261,26 @@ dialog > div {
 .file-icon {
   width: 24px;
   height: 24px;
+}
+
+/* scroll bar*/
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: ivory;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+::-webkit-scrollbar-corner {
+  background: ivory;
 }

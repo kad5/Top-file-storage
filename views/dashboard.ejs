@@ -288,7 +288,7 @@
               'numeric', month: 'short', day: 'numeric', hour: 'numeric',
               minute: 'numeric', hour12: true }) %>
             </div>
-            <div></div>
+            <div>--</div>
             <div>
               <% if (view === "private") { %> <% if (state === "trash") { %>
               <div>
@@ -531,7 +531,16 @@
               'numeric', month: 'short', day: 'numeric', hour: 'numeric',
               minute: 'numeric', hour12: true }) %>
             </div>
-            <div></div>
+            <div>
+              <dialog>
+                <div>
+                  <p>
+                    http://localhost:4000/download/shared/<%= file.file.id %>
+                  </p>
+                </div>
+              </dialog>
+              <button>View</button>
+            </div>
             <div>
               <div>
                 <dialog>
